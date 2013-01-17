@@ -1,6 +1,7 @@
 /*globals suite, test, testExpected, testExpectedLength, testResults*/
 
-var resolveit = require('resolveit');
+var resolveit = require('resolveit'),
+    Path      = require('path');
 
 suite('resolveit', function () {
     
@@ -23,9 +24,22 @@ suite('resolveit', function () {
 
     suite('.buildPaths()', function () {
         
-        suite('args: e/f/g, a/b/c/d', function () {
+        test('absolute basedir should produce absolute paths', function () {
+            var paths = resolveit.buildPaths('d/e/f', { basedir: '/a/b/c' });
+            paths.every(function (path) {
+                return path.indexOf(Path.sep) === 0;
+            }).should.equal(true);
+        });
+        
+        test('absolute search path should return that path', function () {
+            var paths = resolveit.buildPaths('/a/b/c');
+            paths.length.should.equal(1);
+            paths[0].should.equal('/a/b/c');
+        });
+        
+        suite('args: e/f/g, basedir: a/b/c/d', function () {
             testExpected(
-                resolveit.buildPaths('e/f/g', 'a/b/c/d'),
+                resolveit.buildPaths('e/f/g', { basedir: 'a/b/c/d'}),
                 [
                     'a/b/c/d/e/f/g',
                     'a/b/c/e/f/g',
@@ -39,8 +53,12 @@ suite('resolveit', function () {
 
         suite('args: b, a, js, node_modules, index', function () {
             testExpected(
-                resolveit.buildPaths('b', 'a', 'js', 'node_modules', 'index'), 
-                [
+                resolveit.buildPaths('b', {
+                    basedir: 'a',
+                    extension: 'js',
+                    prefix: 'node_modules',
+                    index: 'index'
+                }), [
                     'a/b',
                     'a/b.js',
                     'a/b/index',
@@ -63,13 +81,12 @@ suite('resolveit', function () {
         
         suite('args: c/d, a/b, [js, coffee], node_modules, [index, main]', function () {
             testExpected(
-                resolveit.buildPaths(
-                    'c/d',
-                    'a/b',
-                    ['js', 'coffee'],
-                    'node_modules',
-                    ['index', 'main']
-                ), [
+                resolveit.buildPaths('c/d',{
+                    basedir: 'a/b',
+                    extension: ['js', 'coffee'],
+                    prefix: 'node_modules',
+                    index: ['index', 'main']
+                }), [
                     'a/b/c/d',
                     'a/b/c/d.js',
                     'a/b/c/d.coffee',
