@@ -7,7 +7,7 @@ suite('resolveit', function () {
     
     suite('.explodePath()', function () {
         
-        suite('args: a/b/c/d', function () {
+        suite('a/b/c/d', function () {
             testExpected(
                 resolveit.explodePath('a/b/c/d'),
                 [
@@ -37,7 +37,7 @@ suite('resolveit', function () {
             paths[0].should.equal('/a/b/c');
         });
         
-        suite('args: e/f/g, basedir: a/b/c/d', function () {
+        suite('search: e/f/g, basedir: a/b/c/d', function () {
             testExpected(
                 resolveit.buildPaths('e/f/g', { basedir: 'a/b/c/d'}),
                 [
@@ -51,7 +51,7 @@ suite('resolveit', function () {
             
         });
 
-        suite('args: b, a, js, node_modules, index', function () {
+        suite('search: b, basedir: a, ext: js, prefix: node_modules, index: index', function () {
             testExpected(
                 resolveit.buildPaths('b', {
                     basedir: 'a',
@@ -79,7 +79,7 @@ suite('resolveit', function () {
             );
         });
         
-        suite('args: c/d, a/b, [js, coffee], node_modules, [index, main]', function () {
+        suite('search: c/d, basedir: a/b, extension: [js, coffee], prefix: node_modules, index: [index, main]', function () {
             testExpected(
                 resolveit.buildPaths('c/d',{
                     basedir: 'a/b',
