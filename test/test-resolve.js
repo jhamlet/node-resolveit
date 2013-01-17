@@ -1,14 +1,14 @@
 /*globals suite, test, testExpected, testExpectedLength, testResults*/
 
-var resolve = require('resolve');
+var resolveit = require('resolveit');
 
-suite('resolve', function () {
+suite('resolveit', function () {
     
     suite('.explodePath()', function () {
         
         suite('args: a/b/c/d', function () {
             testExpected(
-                resolve.explodePath('a/b/c/d'),
+                resolveit.explodePath('a/b/c/d'),
                 [
                     'a/b/c/d',
                     'a/b/c',
@@ -25,7 +25,7 @@ suite('resolve', function () {
         
         suite('args: e/f/g, a/b/c/d', function () {
             testExpected(
-                resolve.buildPaths('e/f/g', 'a/b/c/d'),
+                resolveit.buildPaths('e/f/g', 'a/b/c/d'),
                 [
                     'a/b/c/d/e/f/g',
                     'a/b/c/e/f/g',
@@ -39,7 +39,7 @@ suite('resolve', function () {
 
         suite('args: b, a, js, node_modules, index', function () {
             testExpected(
-                resolve.buildPaths('b', 'a', 'js', 'node_modules', 'index'), 
+                resolveit.buildPaths('b', 'a', 'js', 'node_modules', 'index'), 
                 [
                     'a/b',
                     'a/b.js',
@@ -63,7 +63,7 @@ suite('resolve', function () {
         
         suite('args: c/d, a/b, [js, coffee], node_modules, [index, main]', function () {
             testExpected(
-                resolve.buildPaths(
+                resolveit.buildPaths(
                     'c/d',
                     'a/b',
                     ['js', 'coffee'],

@@ -1,0 +1,38 @@
+{   
+    "name": "resolveit",
+    "description": "A highly configurable file resolver",
+    "version": "0.1.0",
+    "keywords": [
+        "resolve",
+        "require",
+        "node",
+        "module",
+        "find",
+        "search"
+    ],
+    "main": "./node_modules/resolveit/index.js",
+    "dependencies": {
+    },
+    "devDependencies": {
+        "mocha":    "0.3.x",
+        "should":   "0.5.x",
+        "sake":     "0.1.x",
+        "ejs":      "0.8.x"
+    },
+    "scripts": {
+        "test": "mocha test/test-*"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://github.com/jhamlet/node-resolveit/raw/master/LICENSE"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/jhamlet/node-resolveit.git"
+    },
+    "bugs": {
+        "url": "http://github.com/jhamlet/node-resolveit/issues"
+    }
+}
