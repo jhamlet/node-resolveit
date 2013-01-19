@@ -3,6 +3,34 @@
 
 > <%-pkg.description%>
 
+## Summary ##
+
+## Installation ##
+
+~~~
+npm install resolveit
+~~~
+
+## Usage ##
+
+~~~
+var resolveit = require('resolveit'),
+    path;
+
+try {
+    path = resolveit.sync('foo', __dirname, {
+        prefix: 'node_modules',
+        index: ['index', 'main'],
+        extension: ['js', 'node']
+    });
+}
+catch (error) {
+    console.log(error);
+}
+
+console.log('Found \'foo\' in \'' + path + '\'');
+~~~
+
 
 ### Development Dependencies ###
 
