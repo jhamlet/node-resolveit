@@ -15,7 +15,7 @@ suite('resolveit', function () {
                     'a/b/c',
                     'a/b',
                     'a',
-                    ''
+                    '.'
                 ]
             );
         });
@@ -144,30 +144,124 @@ suite('resolveit', function () {
                 ]
             );
         });
+    });
+    
+    suite('.sync()', function () {
         
+        test('search: a/index.js, basedir: test/a/b/c/d', function () {
+            var path = resolveit.sync('a/index.js', 'test/a/b/c/d');
+            path.should.equal('test/a/index.js');
+        });
+
+        test(
+            'search: a, basedir: test/a/b/c/d, index: index, ext: js',
+            function () {
+                var path = resolveit.sync('a/index.js', 'test/a/b/c/d', {
+                        index: 'index',
+                        extension: 'js'
+                    });
+                path.should.equal('test/a/index.js');
+            }
+        );
+        
+        test(
+            'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js',
+            function () {
+                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                        prefix: 'modules',
+                        extension: 'js'
+                    });
+                path.should.equal('test/a/b/c/modules/foo.js');
+            }
+        );
+        
+        test(
+            'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js, findAll: true',
+            function () {
+                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                        prefix: 'modules',
+                        extension: 'js',
+                        findAll: true
+                    });
+                
+                path.length.should.equal(3);
+                path.should.include(
+                    'test/a/b/c/modules/foo.js',
+                    'test/a/b/modules/foo.js',
+                    'test/a/modules/foo.js'
+                );
+            }
+        );
+        
+        test(
+            'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js, with transform: +\'-test\'',
+            function () {
+                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                        prefix: 'modules',
+                        extension: 'js',
+                        transform: function (path) {
+                            var ext = Path.extname(path),
+                                dirname = Path.dirname(path),
+                                basename = Path.basename(path, ext);
+                            
+                            return Path.join(dirname, basename + '-test' + ext);
+                        }
+                    });
+                
+                path.should.equal('test/a/foo-test.js');
+            }
+        );
+
+        test(
+            'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js, transform: prune c, findAll: true',
+            function () {
+                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                        prefix: 'modules',
+                        extension: 'js',
+                        transform: function (path) {
+                            return (/c\/modules/.test(path)) ? false : path;
+                        },
+                        findAll: true
+                    });
+                
+                path.length.should.equal(2);
+                path.should.include(
+                    'test/a/b/modules/foo.js',
+                    'test/a/modules/foo.js'
+                );
+                path.should.not.include('test/a/b/c/modules/foo.js');
+            }
+        );
+        
+        test(
+            'search: b/c, basedir: test/a/b/c/d, prefix: modules, directories: true',
+            function () {
+                var path = resolveit.sync('b/c', {
+                        basedir: 'test/a/b/c/d',
+                        prefix: 'modules',
+                        directories: true
+                    });
+                
+                path.should.equal('test/a/b/c');
+            }
+        );
     });
 });
 
 
 function testResults (actual, expected) {
-    expected.forEach(function (result, idx) {
-        var desc = 'result ' + (idx+1) + ' should be ';
-        
-        if (typeof result === 'string') {
-            desc += '"' + result + '"';
-        }
-        else {
-            desc += result;
-        }
-
-        test(desc, function () {
-            actual[idx].should.equal(result);
+    test('All results match expected', function () {
+        actual.forEach(function (result, idx) {
+            result.should.equal(
+                expected[idx],
+                'Expected \'' + expected[idx] + '\', but got \'' + result + '\''
+            );
         });
     });
 }
 
 function testLength (actual, expected) {
-    test('should have ' + expected.length + ' results', function () {
+    test('Should have ' + expected.length + ' paths', function () {
         actual.length.should.equal(expected.length);
     });
 }
