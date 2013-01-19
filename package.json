@@ -11,8 +11,6 @@
         "search"
     ],
     "main": "./node_modules/resolveit/index.js",
-    "dependencies": {
-    },
     "devDependencies": {
         "mocha":    "0.3.x",
         "should":   "0.5.x",

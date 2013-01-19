@@ -1,6 +1,6 @@
-/*globals CLEAN, CLOBBER, desc, task, directory, write, fileSync, log, sh, read */
+/*globals CLEAN, desc, task, directory, write, fileSync, log, sh, read */
 
-require('sake/clobber');
+require('sake/clean');
 
 desc('Generate the README.md documentation');
 fileSync(
@@ -25,17 +25,4 @@ CLEAN.include('README.md');
 
 task('build', ['README.md']);
 
-desc('Run the mocha test suites');
-task('test', function (t) {
-    sh('mocha', function (err, txt) {
-        if (err) {
-            t.abort('tests failed', err);
-        }
-        else {
-            log.info('tests passed');
-            t.done();
-        }
-    });
-});
-
-task('default', ['test', 'build']);
+task('default', ['build']);
