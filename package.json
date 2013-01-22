@@ -17,6 +17,9 @@
         "sake":     "0.1.x",
         "ejs":      "0.8.x"
     },
+    "bundleDependencies": [
+        "resolveit"
+    ],
     "scripts": {
         "test": "mocha test/test-*"
     },
