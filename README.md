@@ -1,24 +1,27 @@
-Resolveit
+resolveIt
 =========
 
 > A highly configurable file resolver
 
-## Summary ##
+Summary
+-------
 
-## Installation ##
+Installation
+------------
 
 ~~~
 npm install resolveit
 ~~~
 
-## Usage ##
+Usage
+-----
 
 ~~~
-var resolveit = require('resolveit'),
+var resolveIt = require('resolveit'),
     path;
 
 try {
-    path = resolveit.sync('foo', __dirname, {
+    path = resolveIt.sync('foo', __dirname, {
         prefix: 'node_modules',
         index: ['index', 'main'],
         extension: ['js', 'node']
@@ -32,15 +35,76 @@ console.log('Found \'foo\' in \'' + path + '\'');
 ~~~
 
 
-### Development Dependencies ###
+Public API
+----------
 
-Installed when you run `npm link` in the package directory.
+### resolveIt.sync(search, [basedir], [options]) ###
 
+Will return a string (or an array of strings if `options.findAll` is true). Will throw an `Error` if the `search` can not be found.
+
+Takes the following arguments:
+
+* `search` a string, is the name, or subpath, you want to find
+* `basedir` a string, or any array of strings, of the directories you want to start searching from.
+* `options` a object with one or more of the following properties
+    * `basedir` a string, or an array of strings, as above. (Super-cedes the `basedir` argument above.)
+    * `prefix` a string, or an array of strings, sub-directory paths to append to the `basedir` path (i.e: 'node_modules').
+    * `index` a string, or an array of strings, possible directory index basenames to try (i.e: 'index', or ['index', 'main']).
+    * `extension` a string, or an array of strings, possible file extensions to try (i.e: 'js').
+    * `transform` a function. Will receive a string as the first argument, which is the current path being created. Return a string, or an array of strings, to make your own modifications to the path. `false` return values will be filtered out of the search.
+    * `findAll` a boolean, set to `true` to return all found paths. Default `false`.
+    * `directories` a boolean, set to `true` to allow matches on directories. Default `false`.
+
+**Note:** `basedir` currently defaults to `process.cwd()` if not supplied in arguments or in the `options` object. This may change to the calling file's `__dirname`.
+
+
+Internal API
+------------
+
+### resolveIt.explodePath(path) ###
+
+Takes a `path`, as a string, and explodes it into an array of ascending directories.
+
+~~~js
+resolveIt.explodePath('a/b/c'); // => [ 'a/b/c', 'a/b', 'a', '.' ]
 ~~~
-mocha:  0.3.x
-should: 0.5.x
-sake:   0.1.x
-ejs:    0.8.x
+
+### resolveIt.buildPaths(search, [options]) ###
+
+Does the underlying work of building all possible search paths. `search` and `options` are the same as `resolveIt.sync`'s arguments, with the exception that `options.basedir` is presumed to be defined as a string, or an array of strings. If `options.basedir` is not defined nothing will be returned.
+
+~~~js
+resolveIt.buildPaths('d', { 
+    basedir: 'a/b',
+    extension: 'js',
+    prefix: 'node_modules',
+    index: 'index'
+});
+// would generate the following results:
+// a/b/d/e
+// a/b/d/e.js
+// a/b/d/e/index
+// a/b/d/e/index.js
+// a/b/d/node_modules/e
+// a/b/d/node_modules/e.js
+// a/b/d/node_modules/e/index
+// a/b/d/node_modules/e/index.js
+// a/d/e
+// a/d/e.js
+// a/d/e/index
+// a/d/e/index.js
+// a/d/node_modules/e
+// a/d/node_modules/e.js
+// a/d/node_modules/e/index
+// a/d/node_modules/e/index.js
+// d/e
+// d/e.js
+// d/e/index
+// d/e/index.js
+// d/node_modules/e
+// d/node_modules/e.js
+// d/node_modules/e/index
+// d/node_modules/e/index.js
 ~~~
 
 
