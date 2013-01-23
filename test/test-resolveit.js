@@ -264,6 +264,18 @@ suite('resolveIt', function () {
         test('search: foo-test.js (as required in a/b/c/d/file.js)', function () {
             require('./a/b/c/d/file.js').should.equal(Path.join(__dirname, 'a/foo-test.js'));
         });
+        
+        test('search: foo.foo should throw an Exception', function () {
+            (function () {
+                resolveIt.sync('foo.foo');
+            }).should.throw();
+        });
+
+        test('search: foo.foo, silent: true should not throw an Exception', function () {
+            (function () {
+                resolveIt.sync('foo.foo', { silent: true });
+            }).should.not.throw();
+        });
     });
 });
 
