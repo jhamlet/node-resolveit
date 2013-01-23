@@ -5,11 +5,11 @@ require('sake/clean');
 desc('Generate the README.md documentation');
 fileSync(
     'README.md',
-    ['README.ejs', 'package.json', 'Sakefile'],
+    ['src/tmpl/README.ejs', 'package.json', 'Sakefile'],
     function (t) {
-        var ejs = require('ejs'),
+        var ejs     = require('ejs'),
             pkgInfo = JSON.parse(read('package.json', 'utf8')),
-            tmpl = ejs.compile(read(t.prerequisites[0], 'utf8')),
+            tmpl    = ejs.compile(read(t.prerequisites[0], 'utf8')),
             tmplParams = {
                 pkg: pkgInfo,
                 license: read('./LICENSE', 'utf8')
@@ -23,6 +23,7 @@ fileSync(
 
 CLEAN.include('README.md');
 
-task('build', ['README.md']);
+task('readme', ['README.md']);
+task('build', ['readme']);
 
 task('default', ['build']);
