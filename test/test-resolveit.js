@@ -1,15 +1,15 @@
 /*globals suite, test, testExpected, testExpectedLength, testResults*/
 
-var resolveit = require('resolveit'),
+var resolveIt = require('resolveit'),
     Path      = require('path');
 
-suite('resolveit', function () {
+suite('resolveIt', function () {
     
-    suite('.explodePath()', function () {
+    suite('#explodePath()', function () {
         
         suite('a/b/c/d', function () {
             testExpected(
-                resolveit.explodePath('a/b/c/d'),
+                resolveIt.explodePath('a/b/c/d'),
                 [
                     'a/b/c/d',
                     'a/b/c',
@@ -21,25 +21,25 @@ suite('resolveit', function () {
         });
         
     });
-
-    suite('.buildPaths()', function () {
+    
+    suite('#buildPaths()', function () {
         
         test('absolute basedir should produce absolute paths', function () {
-            var paths = resolveit.buildPaths('d/e/f', { basedir: '/a/b/c' });
+            var paths = resolveIt.buildPaths('d/e/f', { basedir: '/a/b/c' });
             paths.every(function (path) {
                 return path.indexOf(Path.sep) === 0;
             }).should.equal(true);
         });
         
         test('absolute search path should return that path', function () {
-            var paths = resolveit.buildPaths('/a/b/c');
+            var paths = resolveIt.buildPaths('/a/b/c');
             paths.length.should.equal(1);
             paths[0].should.equal('/a/b/c');
         });
         
         suite('search: e/f/g, basedir: a/b/c/d', function () {
             testExpected(
-                resolveit.buildPaths('e/f/g', { basedir: 'a/b/c/d'}),
+                resolveIt.buildPaths('e/f/g', { basedir: 'a/b/c/d'}),
                 [
                     'a/b/c/d/e/f/g',
                     'a/b/c/e/f/g',
@@ -53,7 +53,7 @@ suite('resolveit', function () {
 
         suite('search: b, basedir: a, ext: js, prefix: node_modules, index: index', function () {
             testExpected(
-                resolveit.buildPaths('b', {
+                resolveIt.buildPaths('b', {
                     basedir: 'a',
                     extension: 'js',
                     prefix: 'node_modules',
@@ -81,7 +81,7 @@ suite('resolveit', function () {
         
         suite('search: c/d, basedir: a/b, extension: [js, coffee], prefix: node_modules, index: [index, main]', function () {
             testExpected(
-                resolveit.buildPaths('c/d',{
+                resolveIt.buildPaths('c/d',{
                     basedir: 'a/b',
                     extension: ['js', 'coffee'],
                     prefix: 'node_modules',
@@ -146,17 +146,17 @@ suite('resolveit', function () {
         });
     });
     
-    suite('.sync()', function () {
+    suite('#sync()', function () {
         
         test('search: a/index.js, basedir: test/a/b/c/d', function () {
-            var path = resolveit.sync('a/index.js', 'test/a/b/c/d');
+            var path = resolveIt.sync('a/index.js', 'test/a/b/c/d');
             path.should.equal('test/a/index.js');
         });
 
         test(
             'search: a, basedir: test/a/b/c/d, index: index, ext: js',
             function () {
-                var path = resolveit.sync('a/index.js', 'test/a/b/c/d', {
+                var path = resolveIt.sync('a/index.js', 'test/a/b/c/d', {
                         index: 'index',
                         extension: 'js'
                     });
@@ -167,7 +167,7 @@ suite('resolveit', function () {
         test(
             'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js',
             function () {
-                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                var path = resolveIt.sync('foo', 'test/a/b/c/d', {
                         prefix: 'modules',
                         extension: 'js'
                     });
@@ -178,7 +178,7 @@ suite('resolveit', function () {
         test(
             'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js, findAll: true',
             function () {
-                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                var path = resolveIt.sync('foo', 'test/a/b/c/d', {
                         prefix: 'modules',
                         extension: 'js',
                         findAll: true
@@ -196,7 +196,7 @@ suite('resolveit', function () {
         test(
             'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js, with transform: +\'-test\'',
             function () {
-                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                var path = resolveIt.sync('foo', 'test/a/b/c/d', {
                         prefix: 'modules',
                         extension: 'js',
                         transform: function (path) {
@@ -215,7 +215,7 @@ suite('resolveit', function () {
         test(
             'search: foo, basedir: test/a/b/c/d, prefix: modules, ext: js, transform: prune c, findAll: true',
             function () {
-                var path = resolveit.sync('foo', 'test/a/b/c/d', {
+                var path = resolveIt.sync('foo', 'test/a/b/c/d', {
                         prefix: 'modules',
                         extension: 'js',
                         transform: function (path) {
@@ -236,7 +236,7 @@ suite('resolveit', function () {
         test(
             'search: b/c, basedir: test/a/b/c/d, prefix: modules, directories: true',
             function () {
-                var path = resolveit.sync('b/c', {
+                var path = resolveIt.sync('b/c', {
                         basedir: 'test/a/b/c/d',
                         prefix: 'modules',
                         directories: true
@@ -245,6 +245,7 @@ suite('resolveit', function () {
                 path.should.equal('test/a/b/c');
             }
         );
+        
     });
 });
 
