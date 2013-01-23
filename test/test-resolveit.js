@@ -5,6 +5,21 @@ var resolveIt = require('resolveit'),
 
 suite('resolveIt', function () {
     
+    suite('#directoryFromStack()', function () {
+        
+        test('should equal __dirname', function () {
+            resolveIt.directoryFromStack().should.equal(__dirname);
+        });
+        
+        test('given start of __filename, should return a mocha directory', function () {
+            var here = __filename,
+                path = resolveIt.directoryFromStack(here);
+                
+            path.should.not.equal(__dirname);
+            path.should.include('mocha');
+        });
+    });
+
     suite('#explodePath()', function () {
         
         suite('a/b/c/d', function () {
@@ -246,6 +261,9 @@ suite('resolveIt', function () {
             }
         );
         
+        test('search: foo-test.js (as required in a/b/c/d/file.js)', function () {
+            require('./a/b/c/d/file.js').should.equal(Path.join(__dirname, 'a/foo-test.js'));
+        });
     });
 });
 
