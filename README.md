@@ -6,6 +6,11 @@ resolveIt
 Summary
 -------
 
+Given a `searchPath`, and various options, return a resolved path.
+
+Works on the same principle as node's `require.resolve` method does, however, it is far more configurable and does not assume any particular structure. (i.e: you have to give it the structure to search).
+
+
 Installation
 ------------
 
@@ -40,26 +45,32 @@ Public API
 
 ### resolveIt.sync(search, [basedir], [options]) ###
 
-Will return a string (or an array of strings if `options.findAll` is true). Will throw an `Error` if the `search` can not be found.
+Will return a string (or an array of strings if `options.findAll` is true). Will throw an `Error` if the `search` can not be found (unless `options.silent` is true).
 
 Takes the following arguments:
 
-* `search` a string, is the name, or subpath, you want to find
-* `basedir` a string, or any array of strings, of the directories you want to start searching from.
-* `options` a object with one or more of the following properties
-    * `basedir` a string, or an array of strings, as above. (Super-cedes the `basedir` argument above.)
-    * `prefix` a string, or an array of strings, sub-directory paths to append to the `basedir` path (i.e: 'node_modules').
-    * `index` a string, or an array of strings, possible directory index basenames to try (i.e: 'index', or ['index', 'main']).
+* `search` a string, the name, or subpath, you want to find
+* `basedir` a string, or an array of strings, of the directories you want to start searching from.
+* `options` an object with one or more of the following properties:
+    * `basedir` a string, or an array of strings, as above. (Replaces the `basedir` argument above.)
+    * `prefix` a string, or an array of strings, of sub-directory paths to append to the `basedir` path (i.e: 'node_modules').
+    * `index` a string, or an array of strings, possible directory index base-names to try (i.e: 'index', or ['index', 'main']).
     * `extension` a string, or an array of strings, possible file extensions to try (i.e: 'js').
-    * `transform` a function. Will receive a string as the first argument, which is the current path being created. Return a string, or an array of strings, to make your own modifications to the path. `false` return values will be filtered out of the search.
+    * `transform` a function. Will receive a string as the first argument, which is the current path being created. Return a string, or an array of strings, to make your own modifications to the paths searched. `false` return values will be filtered out of the search.
     * `findAll` a boolean, set to `true` to return all found paths. Default `false`.
     * `directories` a boolean, set to `true` to allow matches on directories. Default `false`.
+    * `silent` a boolean, set to `true` to silently fail (don't throw an exception). Default `false`.
 
-**Note:** `basedir` currently defaults to `process.cwd()` if not supplied in arguments or in the `options` object. This may change to the calling file's `__dirname`.
+**Note:** `basedir` defaults to the directory of the calling method's file path, or `process.cwd()` if that can not be determined.
 
 
 Internal API
 ------------
+
+### resolveIt.directoryFromStack([startPath]) ###
+
+Using an error stack, try to determine the calling directory.  If passed the optional *startPath* parameter, use that to determine where to start looking in the stack trace.
+
 
 ### resolveIt.explodePath(path) ###
 
