@@ -21,7 +21,7 @@ npm install resolveit
 Usage
 -----
 
-~~~
+~~~js
 var resolveIt = require('resolveit'),
     path;
 
@@ -56,13 +56,55 @@ Takes the following arguments:
     * `prefix` a string, or an array of strings, of sub-directory paths to append to the `basedir` path (i.e: 'node_modules').
     * `index` a string, or an array of strings, possible directory index base-names to try (i.e: 'index', or ['index', 'main']).
     * `extension` a string, or an array of strings, possible file extensions to try (i.e: 'js').
-    * `transform` a function. Will receive a string as the first argument, which is the current path being created. Return a string, or an array of strings, to make your own modifications to the paths searched. `false` return values will be filtered out of the search.
+    * `packages` an array of strings, or an object with package file names as property names and functions as values (see below).
+    * `transform` a function. Will receive a string as the first argument, which is the current path being created. Return a string, or an array of strings, to make your own modifications to the paths searched. *false-like* return values will be filtered out of the search.
     * `findAll` a boolean, set to `true` to return all found paths. Default `false`.
     * `directories` a boolean, set to `true` to allow matches on directories. Default `false`.
     * `silent` a boolean, set to `true` to silently fail (don't throw an exception). Default `false`.
 
 **Note:** `basedir` defaults to the directory of the calling method's file path, or `process.cwd()` if that can not be determined.
 
+#### Packages ####
+
+The `packages` option allows you specify which file names should be treated as *package* files.
+
+If given an `Array` of package names, the default is to treat the file as a JSON file and return the `main` property joined with the found file's directory path.
+
+~~~js
+// Default package reader behavior
+
+path = resolveIt.sync('foo', __dirname, {
+    prefix: 'node_modules',
+    index: ['index', 'main', 'package'],
+    extension: ['js', 'json'],
+    packages: ['package.json']
+});
+~~~
+
+If given an `Object` with properties as package names and their values as functions, the function will be passed the file path and is expected to return the actual path to find the file. If a *false-like* value is returned, it moves on to the next possible path.
+
+~~~js
+// Custom package reader
+
+path = resolveIt.sync('foo', __dirname, {
+    prefix: 'node_modules',
+    index: ['index', 'main', 'package'],
+    extension: ['js', 'txt'],
+    packages: {
+        'package.txt': function (pkgpath) {
+            // read the file and return what would be the correct path
+            // i.e:
+            var Path = require('path'),
+                FS = require('fs'),
+                filepath;
+            
+            filepath = FS.readFileSync(pkgpath, 'utf8').split(/\n/)[0];
+            
+            return filepath ? Path.join(Path.dirname(pkgpath), filepath) : false;
+        }
+    }
+});
+~~~
 
 Internal API
 ------------
