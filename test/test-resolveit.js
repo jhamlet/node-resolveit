@@ -277,6 +277,40 @@ suite('resolveIt', function () {
             }).should.not.throw();
         });
     });
+    
+    suite('packages', function () {
+        test('search: baz', function () {
+            var path = resolveIt.sync('baz', {
+                    basedir: 'test/a/b/c/d',
+                    prefix: 'modules',
+                    index: 'package',
+                    extension: 'json',
+                    packages: {
+                        'package.json': function (pkgpath) {
+                            var FS = require('fs');
+                            return Path.join(
+                                Path.dirname(pkgpath),
+                                JSON.parse(FS.readFileSync(pkgpath, 'utf8')).index
+                            );
+                        }
+                    }
+                });
+            
+            path.should.equal('test/a/modules/baz/lib/index.js');
+        });
+
+        test('search: baz', function () {
+            var path = resolveIt.sync('baz', {
+                    basedir: 'test/a/b/c/d',
+                    prefix: 'modules',
+                    index: 'package',
+                    extension: 'json',
+                    packages: ['package.json']
+                });
+            
+            path.should.equal('test/a/modules/baz/lib/index.js');
+        });
+    });
 });
 
 
