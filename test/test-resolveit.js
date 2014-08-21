@@ -16,7 +16,7 @@ suite('resolveIt', function () {
                 path = resolveIt.directoryFromStack(here);
                 
             path.should.not.equal(__dirname);
-            path.should.include('mocha');
+            path.should.containEql('mocha');
         });
     });
 
@@ -200,11 +200,9 @@ suite('resolveIt', function () {
                     });
                 
                 path.length.should.equal(3);
-                path.should.include(
-                    'test/a/b/c/modules/foo.js',
-                    'test/a/b/modules/foo.js',
-                    'test/a/modules/foo.js'
-                );
+                path.should.containEql('test/a/b/c/modules/foo.js');
+                path.should.containEql('test/a/b/modules/foo.js');
+                path.should.containEql('test/a/modules/foo.js');
             }
         );
         
@@ -240,11 +238,9 @@ suite('resolveIt', function () {
                     });
                 
                 path.length.should.equal(2);
-                path.should.include(
-                    'test/a/b/modules/foo.js',
-                    'test/a/modules/foo.js'
-                );
-                path.should.not.include('test/a/b/c/modules/foo.js');
+                path.should.containEql('test/a/b/modules/foo.js');
+                path.should.containEql('test/a/b/modules/foo.js');
+                path.should.not.containEql('test/a/b/c/modules/foo.js');
             }
         );
         
