@@ -1,7 +1,7 @@
 {   
     "name": "resolveit",
     "description": "A highly configurable file resolver",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "keywords": [
         "resolve",
         "require",
