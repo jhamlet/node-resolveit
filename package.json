@@ -1,7 +1,7 @@
 {   
     "name": "resolveit",
     "description": "A highly configurable file resolver",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "keywords": [
         "resolve",
         "require",
@@ -12,8 +12,8 @@
     ],
     "main": "./node_modules/resolveit/index.js",
     "devDependencies": {
-        "mocha":    "0.3.x",
-        "should":   "0.5.x",
+        "mocha":    "1.x.x",
+        "should":   "4.x.x",
         "sake":     "0.1.x",
         "ejs":      "0.8.x"
     },
