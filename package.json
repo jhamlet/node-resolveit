@@ -10,7 +10,7 @@
         "find",
         "search"
     ],
-    "main": "./node_modules/resolveit/index.js",
+    "main": "lib/index.js",
     "devDependencies": {
         "mocha":    "1.x.x",
         "should":   "4.x.x",
