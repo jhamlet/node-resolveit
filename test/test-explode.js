@@ -1,8 +1,8 @@
 /*globals describe, it */
-var explode = require('../node_modules/resolveit/explode'),
+var explode = require('../lib/explode'),
     should = require('should');
 
-describe('resoliveIt.explode()', function () {
+describe('resolveIt.explode()', function () {
     
     it('a/b/c/d', function () {
         explode('a/b/c/d').

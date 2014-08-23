@@ -1,26 +1,56 @@
 /*globals describe, it */
-var buildPaths = require('../node_modules/resolveit/build-paths'),
+var traverse = require('../lib/traverse'),
     path = require('path'),
     PATH_SEP = path.sep,
     should = require('should');
 
-describe('resolveIt.buildPaths()', function () {
+describe('resolveIt.traverse()', function () {
         
     it('absolute basedir should produce absolute paths', function () {
-        var paths = buildPaths('d/e/f', { basedir: '/a/b/c' });
-        paths.every(function (path) {
-            return path.indexOf(PATH_SEP) === 0;
-        }).should.equal(true);
+        traverse('d/e/f', { basedir: '/a/b/c' }, function (path) {
+            path.indexOf(PATH_SEP).should.equal(0);
+        });
     });
     
     it('absolute search path should return that path', function () {
-        var paths = buildPaths('/a/b/c');
-        paths.length.should.equal(1);
-        paths[0].should.equal('/a/b/c');
+        var results = [];
+        
+        traverse('/a/b/c', function (path) {
+            results.push(path);
+        });
+
+        results.length.should.equal(1);
+        results[0].should.equal('/a/b/c');
     });
         
+    it('absolute search path should try indexes and extension', function () {
+        var results = [];
+
+        traverse('/a/b/c', {
+            index: 'index',
+            extension: 'js'
+        }, function (path) {
+            results.push(path);
+        });
+
+        results.
+            should.
+            eql([
+                '/a/b/c',
+                '/a/b/c.js',
+                '/a/b/c/index',
+                '/a/b/c/index.js'
+            ]);
+    });
+    
     it('search: e/f/g, basedir: a/b/c/d', function () {
-        buildPaths('e/f/g', { basedir: 'a/b/c/d'}).
+        var results = [];
+
+        traverse('e/f/g', { basedir: 'a/b/c/d'}, function (path) {
+            results.push(path);
+        });
+
+        results.
             should.
             eql([
                 'a/b/c/d/e/f/g',
@@ -33,12 +63,16 @@ describe('resolveIt.buildPaths()', function () {
     });
 
     it('search: b, basedir: a, ext: js, prefix: node_modules, index: index', function () {
-        buildPaths('b', {
+        var results = [];
+
+        traverse('b', {
             basedir: 'a',
             extension: 'js',
             prefix: 'node_modules',
             index: 'index'
-        }).
+        }, function (path) { results.push(path); });
+
+        results.
             should.
             eql([
                 'a/b',
@@ -61,12 +95,16 @@ describe('resolveIt.buildPaths()', function () {
     });
     
     it('search: c/d, basedir: a/b, extension: [js, coffee], prefix: node_modules, index: [index, main]', function () {
-        buildPaths('c/d',{
+        var results = [];
+
+        traverse('c/d',{
             basedir: 'a/b',
             extension: ['js', 'coffee'],
             prefix: 'node_modules',
             index: ['index', 'main']
-        }).
+        }, function (path) { results.push(path); });
+
+        results.
             should.
             eql([
                 'a/b/c/d',
