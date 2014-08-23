@@ -8,7 +8,9 @@ Summary
 
 Given a `searchPath`, and various options, return a resolved path.
 
-Works on the same principle as node's `require.resolve` method does, however, it is far more configurable and does not assume any particular structure. (i.e: you have to give it the structure to search).
+Works on the same principle as node's `require.resolve` method does, however, it is
+far more configurable and does not assume any particular structure. (i.e: you have to
+give it the structure to search).
 
 
 Installation
@@ -45,30 +47,39 @@ Public API
 
 ### resolveIt.sync(search, [basedir], [options]) ###
 
-Will return a string (or an array of strings if `options.findAll` is true). Will throw an `Error` if the `search` can not be found (unless `options.silent` is true).
+Will return a string (or an array of strings if `options.findAll` is true). Will
+throw an `Error` if the `search` can not be found (unless `options.silent` is true).
 
 Takes the following arguments:
 
 * `search` a string, the name, or subpath, you want to find
-* `basedir` a string, or an array of strings, of the directories you want to start searching from.
+* `basedir` a string, or an array of strings, of the directories you want to start
+  searching from.
 * `options` an object with one or more of the following properties:
-    * `basedir` a string, or an array of strings, as above. (Replaces the `basedir` argument above.)
-    * `prefix` a string, or an array of strings, of sub-directory paths to append to the `basedir` path (i.e: 'node_modules').
-    * `index` a string, or an array of strings, possible directory index base-names to try (i.e: 'index', or ['index', 'main']).
-    * `extension` a string, or an array of strings, possible file extensions to try (i.e: 'js').
-    * `packages` an array of strings, or an object with package file names as property names and functions as values (see below).
-    * `transform` a function. Will receive a string as the first argument, which is the current path being created. Return a string, or an array of strings, to make your own modifications to the paths searched. *false-like* return values will be filtered out of the search.
-    * `findAll` a boolean, set to `true` to return all found paths. Default `false`.
-    * `directories` a boolean, set to `true` to allow matches on directories. Default `false`.
-    * `silent` a boolean, set to `true` to silently fail (don't throw an exception). Default `false`.
+    * `basedir` a string, or an array of strings, as above. (Replaces the `basedir`
+      argument above.)
+    * `prefix` a string, or an array of strings, of sub-directory paths to append to
+      the `basedir` path (i.e: 'node_modules').
+    * `index` a string, or an array of strings, possible directory index base-names
+      to try (i.e: 'index', or ['index', 'main']).
+    * `extension` a string, or an array of strings, possible file extensions to try
+      (i.e: 'js').
+    * `packages` an array of strings, or an object with package file names as
+      property names and functions as values (see below).
+    * `findAll` a boolean, return all found paths. Default `false`.
+    * `directories` a boolean, match on directories. Default `false`.
+    * `silent` a boolean, silently fail (don't throw an exception). Default `false`.
 
-**Note:** `basedir` defaults to the directory of the calling method's file path, or `process.cwd()` if that can not be determined.
+**Note:** `basedir` defaults to the directory of the calling method's file path, or
+`process.cwd()` if that can not be determined.
 
 #### Packages ####
 
-The `packages` option allows you specify which file names should be treated as *package* files.
+The `packages` option allows you specify which file names should be treated as
+*package* files.
 
-If given an `Array` of package names, the default is to treat the file as a JSON file and return the `main` property joined with the found file's directory path.
+If given an `Array` of package names, the default is to treat the file as a JSON file
+and return the `main` property joined with the found file's directory path.
 
 ~~~js
 // Default package reader behavior
@@ -81,7 +92,10 @@ path = resolveIt.sync('foo', __dirname, {
 });
 ~~~
 
-If given an `Object` with properties as package names and their values as functions, the function will be passed the file path and is expected to return the actual path to find the file. If a *false-like* value is returned, it moves on to the next possible path.
+If given an `Object` with properties as package names and their values as functions,
+the function will be passed the file path and is expected to return the actual path
+to find the file. If a *false-like* value is returned, it moves on to the next
+possible path.
 
 ~~~js
 // Custom package reader
@@ -111,27 +125,35 @@ Internal API
 
 ### resolveIt.directoryFromStack([startPath]) ###
 
-Using an error stack, try to determine the calling directory.  If passed the optional *startPath* parameter, use that to determine where to start looking in the stack trace.
+Using an error stack, try to determine the calling directory.  If passed the optional
+*startPath* parameter, use that to determine where to start looking in the stack
+trace.
 
 
-### resolveIt.explodePath(path) ###
+### resolveIt.explode(path) ###
 
 Takes a `path`, as a string, and explodes it into an array of ascending directories.
 
 ~~~js
-resolveIt.explodePath('a/b/c'); // => [ 'a/b/c', 'a/b', 'a', '.' ]
+resolveIt.explode('a/b/c'); // => [ 'a/b/c', 'a/b', 'a', '.' ]
 ~~~
 
-### resolveIt.buildPaths(search, [options]) ###
+### resolveIt.traverse(search, [options], callback) ###
 
-Does the underlying work of building all possible search paths. `search` and `options` are the same as `resolveIt.sync`'s arguments, with the exception that `options.basedir` is presumed to be defined as a string, or an array of strings. If `options.basedir` is not defined nothing will be returned.
-
+Does the underlying work of building all possible search paths calling `callback`
+with each path.  If the callback returns true, then the search will stop, otherwise
+it will continue on to the next path.`search` and `options` are the same as
+`resolveIt.sync`'s arguments, with the exception that `options.basedir` is
+presumed to be defined as a string, or an array of strings.
 ~~~js
-resolveIt.buildPaths('d', { 
+resolveIt.traverse('d', { 
     basedir: 'a/b',
     extension: 'js',
     prefix: 'node_modules',
     index: 'index'
+}, function (path) {
+    console.log('// ' + path);
+    return false;
 });
 // would generate the following results:
 // a/b/d/e
